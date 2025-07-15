@@ -1,11 +1,9 @@
-/* 1. tiny tracker-relay (p2pt) */
-import P2PT from 'https://raw.githack.com/subins2000/p2pt/master/dist/p2pt.js';
-
+// ---------- tiny tracker-relay via P2PT ----------
 const trackers = ['wss://tracker.openwebtorrent.com', 'wss://tracker.files.fm:7073/announce'];
 const room = location.hash.slice(1) || 'public';
 const p2pt = new P2PT(trackers, 'cinemeet-' + room);
 
-/* helpers */
+// ---------- helpers ----------
 const qs = sel => document.querySelector(sel);
 const toast = msg => {
   const el = document.createElement('div');
@@ -15,7 +13,17 @@ const toast = msg => {
   setTimeout(() => el.remove(), 3000);
 };
 
-/* camera → peer */
+// expose for button
+window.shareRoom = () => {
+  const r = prompt('Room name:') || 'public';
+  const url = location.origin + location.pathname + '#' + r;
+  navigator.clipboard.writeText(url);
+  toast('Link copied: ' + url);
+  location.hash = r;
+  location.reload();
+};
+
+// ---------- camera + peer ----------
 let peerInstance;
 navigator.mediaDevices
   .getUserMedia({ video: true, audio: true })
@@ -43,17 +51,7 @@ navigator.mediaDevices
   })
   .catch(() => toast('Camera denied'));
 
-/* share-room button */
-window.shareRoom = () => {
-  const r = prompt('Room name (letters/numbers only):') || 'public';
-  const url = location.origin + location.pathname + '#' + r;
-  navigator.clipboard.writeText(url);
-  toast('Link copied: ' + url);
-  location.hash = r;
-  location.reload();                 // jump to the new room
-};
-
-/* rest of the code (chat, file, screen, theme) */
+// ---------- rest (chat, file, screen, theme) ----------
 const chatBox = qs('#chat');
 const chatInput = qs('#chatMsg');
 function addChat(txt) {
@@ -70,16 +68,15 @@ chatInput.addEventListener('keydown', e => {
   }
 });
 
-/* emoji fallback (optional) */
-try {
-  const picker = new (window as any).EmojiButton();
-  picker.on('emoji', emoji => (chatInput.value += emoji));
-  qs('#emojiBtn').addEventListener('click', () => picker.togglePicker(chatInput));
-} catch {
-  qs('#emojiBtn').style.display = 'none'; // hide if no emoji lib
-}
+// theme toggle
+const themeBtn = qs('#themeBtn');
+themeBtn.addEventListener('click', () => {
+  const dark = document.documentElement.dataset.theme !== 'dark';
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+});
 
-/* file player */
+// file player
 qs('#fileInput').addEventListener('change', e => loadFile(e.target.files[0]));
 qs('#dropZone').addEventListener('dragover', e => e.preventDefault());
 qs('#dropZone').addEventListener('drop', e => {
@@ -93,7 +90,7 @@ function loadFile(file) {
   player.play();
 }
 
-/* screen share */
+// screen share
 const screenBtn = qs('#screenBtn');
 const myCam = qs('#myCam');
 let sharing = false;
@@ -127,11 +124,3 @@ function stopShare() {
   screenBtn.innerHTML = '<i class="material-icons-round">present_to_all</i>';
   toast('Stopped sharing');
 }
-
-/* theme toggle */
-const themeBtn = qs('#themeBtn');
-themeBtn.addEventListener('click', () => {
-  const dark = document.documentElement.dataset.theme !== 'dark';
-  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-});
