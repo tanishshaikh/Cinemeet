@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>CineMeet – Watch Together</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header>
+    <h1>CineMeet</h1>
+    <div id="controls">
+      <button id="screenBtn"  class="ctrl" title="Share screen"><i class="material-icons-round">present_to_all</i></button>
+      <button id="themeBtn"   class="ctrl" title="Toggle theme"><i class="material-icons-round">brightness_4</i></button>
+      <button id="settingsBtn"class="ctrl" title="Settings"><i class="material-icons-round">settings</i></button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Remote / Screen share -->
+    <section id="stage">
+      <video id="remote" autoplay></video>
+      <!-- PiP windows -->
+      <video id="local" class="pip" autoplay muted></video>
+      <video id="myCam" class="pip hidden" autoplay muted></video>
+    </section>
+
+    <!-- Sidebar -->
+    <aside>
+      <!-- Media player -->
+      <div class="card media-card">
+        <h3>Media</h3>
+        <input type="file" id="fileInput" accept="video/*,audio/*" hidden>
+        <div id="dropZone">
+          <i class="material-icons-round">cloud_upload</i>
+          <p>Drop media or <button id="browseBtn">browse</button></p>
+        </div>
+        <video id="player" controls></video>
+      </div>
+
+      <!-- Chat -->
+      <div class="card chat-card">
+        <h3>Chat</h3>
+        <div id="chat" class="messages"></div>
+        <div class="chatBar">
+          <input id="chatMsg" placeholder="Message…">
+          <button id="emojiBtn"><i class="material-icons-round">mood</i></button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Toast container -->
+  <div id="toasts"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/simple-peer@9/simplepeer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emoji-button@4"></script>
+  <script src="script.js"></script>
+</body>
+</html>
